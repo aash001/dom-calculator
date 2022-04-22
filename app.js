@@ -1,28 +1,32 @@
-//DOM Objects
-document.addEventListener("DOMContentLoaded", function () {
-    const screenDisplay = document.querySelector("#screen");
-    const spans = document.querySelectorAll('.buttons span');
-    const spanArray = Array.from(spans);
+const $ = {
+    screen: document.querySelector("#screen"),
+    buttons: document.querySelectorAll("span"),
+}
 
-    function operatorSwitch(symbol) {
-        let newOperator = symbol
-        if (symbol.includes("÷")) {
-            newOperator = symbol.replace('÷', '/')
-        } else if (symbol.includes("x")) {
-            newOperator = symbol.replace('x', '*')
-        }
-        return newOperator
+$.buttons.forEach(attachEventListenerToNumber)
+
+function handleButtonClick(event) {
+    switch (event.target.textContent) {
+        case "=":
+            const result = eval($.screen.textContent)
+            $.screen.textContent = result == Infinity ?
+                "Error" :
+                result
+            break;
+        case "÷":
+            $.screen.textContent += "/"
+            break;
+        case "x":
+            $.screen.textContent += "*"
+            break;
+        case "C":
+            $.screen.textContent = " ";
+            break;
+        default:
+            $.screen.textContent += event.target.textContent;
     }
+}
 
-    spanArray.map(button => button.addEventListener('click', function () {
-        if (button.innerText !== "=") {
-            screenDisplay.innerText += button.innerText
-        };
-        if (button.innerText === "=") {
-            screenDisplay.innerText = eval(operatorSwitch(screenDisplay.innerText))
-        };
-        if (button.innerText === "C") {
-            screenDisplay.innerText = ""
-        };
-    }));
-});
+function attachEventListenerToNumber($button) {
+    $button.addEventListener("click", handleButtonClick);
+}
